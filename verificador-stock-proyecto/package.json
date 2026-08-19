@@ -1,0 +1,36 @@
+{
+  "name": "verificador-stock-app",
+  "version": "1.0.0",
+  "description": "Sistema de verificación de stock en tiempo real escalable por componentes con TypeScript, Express, PostgreSQL y HTML/CSS modular",
+  "type": "module",
+  "main": "dist/backend/server.js",
+  "scripts": {
+    "build:backend": "tsc -p tsconfig.backend.json",
+    "build:frontend": "tsc -p tsconfig.frontend.json",
+    "build": "npm run build:backend && npm run build:frontend",
+    "db:migrate": "prisma migrate dev --name init",
+    "db:seed": "tsx src/backend/prisma/seed.ts",
+    "start": "node dist/backend/server.js",
+    "dev": "concurrently \"tsc -p tsconfig.backend.json -w\" \"tsc -p tsconfig.frontend.json -w\" \"nodemon dist/backend/server.js\""
+  },
+  "prisma": {
+    "seed": "tsx src/backend/prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.19.43",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.10.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.12",
+    "typescript": "^5.3.3"
+  }
+}

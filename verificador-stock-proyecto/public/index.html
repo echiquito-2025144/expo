@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda Demo | Verificación de Stock en Tiempo Real</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <div class="container navbar-content">
+      <h1 class="logo">TechStore<span>.io</span></h1>
+      <span class="status-indicator">🟢 Conectado a PostgreSQL</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Catálogo de Productos en Tiempo Real</h2>
+      <p>El sistema detecta automáticamente la disponibilidad de stock desde nuestra base de datos PostgreSQL usando TypeScript y Express.</p>
+    </section>
+
+    <section id="products-grid" class="products-grid">
+      <!-- Los componentes ProductCard se renderizan aquí dinámicamente -->
+    </section>
+  </main>
+
+  <script type="module" src="js/frontend/app.js"></script>
+</body>
+</html>
