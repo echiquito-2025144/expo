@@ -5,7 +5,8 @@ import { ProductoDTO } from '../shared/types/producto.types.js';
 class App {
   private api = new ApiService();
   private gridContainer = document.getElementById('products-grid');
-  private modal = document.getElementById('product-modal') as HTMLDivElement;
+  private viewCatalog = document.getElementById('view-catalog') as HTMLElement;
+  private viewForm = document.getElementById('view-form') as HTMLElement;
   private form = document.getElementById('product-form') as HTMLFormElement;
   private btnNuevo = document.getElementById('btn-nuevo') as HTMLButtonElement;
   private editingId: number | null = null;
@@ -39,7 +40,7 @@ class App {
         const card = new ProductCard(
           productoDTO,
           (p) => this.openEditModal(p),
-          (id) => this.handleDelete(Number(id)) // Conversión explícita a number
+          (id) => this.handleDelete(Number(id))
         );
   
         this.gridContainer?.appendChild(card.getElement());
@@ -49,10 +50,31 @@ class App {
     }
   }
 
+  // Métodos auxiliares para alternar la vista activa
+  private showFormView(title: string): void {
+    if (this.viewCatalog && this.viewForm) {
+      this.viewCatalog.style.display = 'none';
+      this.viewForm.style.display = 'block';
+    }
+    const formTitle = document.getElementById('form-title');
+    if (formTitle) formTitle.innerText = title;
+  }
+
+  private showCatalogView(): void {
+    if (this.viewCatalog && this.viewForm) {
+      this.viewForm.style.display = 'none';
+      this.viewCatalog.style.display = 'block';
+    }
+    this.form.reset();
+    this.editingId = null;
+  }
+
   private setupEventListeners(): void {
     this.btnNuevo?.addEventListener('click', () => this.openCreateModal());
     
-    document.getElementById('btn-close')?.addEventListener('click', () => this.closeModal());
+    // Controles para regresar desde el formulario
+    document.getElementById('btn-back')?.addEventListener('click', () => this.showCatalogView());
+    document.getElementById('btn-cancel')?.addEventListener('click', () => this.showCatalogView());
 
     this.form?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -63,25 +85,27 @@ class App {
   private openCreateModal(): void {
     this.editingId = null;
     this.form.reset();
-    
-    const title = document.getElementById('modal-title');
-    if (title) title.innerText = 'Nuevo Producto';
-    
-    this.modal.style.display = 'flex'; // Cambia el display directamente
+    this.showFormView('Nuevo Producto');
   }
 
-  private closeModal(): void {
-    this.modal.style.display = 'none'; // Oculta el modal
-  }
+  private openEditModal(product: ProductoDTO): void {
+    this.editingId = Number(product.id);
+    (document.getElementById('prod-nombre') as HTMLInputElement).value = product.nombre;
+    (document.getElementById('prod-desc') as HTMLTextAreaElement).value = product.descripcion;
+    (document.getElementById('prod-precio') as HTMLInputElement).value = product.precio.toString();
+    (document.getElementById('prod-stock') as HTMLInputElement).value = product.stock.toString();
+    
+    const imgInput = document.getElementById('prod-imagen') as HTMLInputElement;
+    if (imgInput) imgInput.value = product.imagenUrl || '';
 
+    this.showFormView('Editar Producto');
+  }
 
   private async handleFormSubmit(): Promise<void> {
     const nombre = (document.getElementById('prod-nombre') as HTMLInputElement).value;
     const descripcion = (document.getElementById('prod-desc') as HTMLTextAreaElement).value;
     const precio = parseFloat((document.getElementById('prod-precio') as HTMLInputElement).value);
     const stock = parseInt((document.getElementById('prod-stock') as HTMLInputElement).value, 10);
-    const imagenUrl = (document.getElementById('prod-imagen') as HTMLInputElement).value;
-
     const imagenUrlInput = (document.getElementById('prod-imagen') as HTMLInputElement)?.value || '';
 
     const payload = {
@@ -95,24 +119,15 @@ class App {
     try {
       if (this.editingId === null) {
         await this.api.createProducto(payload);
+      } else {
+        await this.api.updateProducto(this.editingId, payload);
       }
-      this.closeModal();
+      this.showCatalogView();
       await this.loadProducts();
     } catch (error) {
       console.error('Error al guardar producto:', error);
     }
   }
-
-  private openEditModal(product: ProductoDTO): void {
-    this.editingId = Number(product.id);
-    (document.getElementById('prod-nombre') as HTMLInputElement).value = product.nombre;
-    (document.getElementById('prod-desc') as HTMLInputElement).value = product.descripcion;
-    (document.getElementById('prod-precio') as HTMLInputElement).value = product.precio.toString();
-    (document.getElementById('prod-stock') as HTMLInputElement).value = product.stock.toString();
-    (document.getElementById('modal-title') as HTMLElement).innerText = 'Editar Producto';
-    this.modal.classList.add('active');
-  }
-
 
   private async handleDelete(id: number): Promise<void> {
     if (confirm('¿Deseas eliminar este producto?')) {

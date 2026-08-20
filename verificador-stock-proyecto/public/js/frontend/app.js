@@ -3,7 +3,8 @@ import { ProductCard } from './components/ProductCard.js';
 class App {
     api = new ApiService();
     gridContainer = document.getElementById('products-grid');
-    modal = document.getElementById('product-modal');
+    viewCatalog = document.getElementById('view-catalog');
+    viewForm = document.getElementById('view-form');
     form = document.getElementById('product-form');
     btnNuevo = document.getElementById('btn-nuevo');
     editingId = null;
@@ -29,8 +30,7 @@ class App {
                     disponible: prod.stock > 0,
                     imagenUrl: prod.imagenUrl || 'https://via.placeholder.com/150'
                 };
-                const card = new ProductCard(productoDTO, (p) => this.openEditModal(p), (id) => this.handleDelete(Number(id)) // Conversión explícita a number
-                );
+                const card = new ProductCard(productoDTO, (p) => this.openEditModal(p), (id) => this.handleDelete(Number(id)));
                 this.gridContainer?.appendChild(card.getElement());
             });
         }
@@ -38,9 +38,29 @@ class App {
             this.gridContainer.innerHTML = '<p class="error">Error al cargar la tienda.</p>';
         }
     }
+    // Métodos auxiliares para alternar la vista activa
+    showFormView(title) {
+        if (this.viewCatalog && this.viewForm) {
+            this.viewCatalog.style.display = 'none';
+            this.viewForm.style.display = 'block';
+        }
+        const formTitle = document.getElementById('form-title');
+        if (formTitle)
+            formTitle.innerText = title;
+    }
+    showCatalogView() {
+        if (this.viewCatalog && this.viewForm) {
+            this.viewForm.style.display = 'none';
+            this.viewCatalog.style.display = 'block';
+        }
+        this.form.reset();
+        this.editingId = null;
+    }
     setupEventListeners() {
         this.btnNuevo?.addEventListener('click', () => this.openCreateModal());
-        document.getElementById('btn-close')?.addEventListener('click', () => this.closeModal());
+        // Controles para regresar desde el formulario
+        document.getElementById('btn-back')?.addEventListener('click', () => this.showCatalogView());
+        document.getElementById('btn-cancel')?.addEventListener('click', () => this.showCatalogView());
         this.form?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleFormSubmit();
@@ -49,20 +69,24 @@ class App {
     openCreateModal() {
         this.editingId = null;
         this.form.reset();
-        const title = document.getElementById('modal-title');
-        if (title)
-            title.innerText = 'Nuevo Producto';
-        this.modal.style.display = 'flex'; // Cambia el display directamente
+        this.showFormView('Nuevo Producto');
     }
-    closeModal() {
-        this.modal.style.display = 'none'; // Oculta el modal
+    openEditModal(product) {
+        this.editingId = Number(product.id);
+        document.getElementById('prod-nombre').value = product.nombre;
+        document.getElementById('prod-desc').value = product.descripcion;
+        document.getElementById('prod-precio').value = product.precio.toString();
+        document.getElementById('prod-stock').value = product.stock.toString();
+        const imgInput = document.getElementById('prod-imagen');
+        if (imgInput)
+            imgInput.value = product.imagenUrl || '';
+        this.showFormView('Editar Producto');
     }
     async handleFormSubmit() {
         const nombre = document.getElementById('prod-nombre').value;
         const descripcion = document.getElementById('prod-desc').value;
         const precio = parseFloat(document.getElementById('prod-precio').value);
         const stock = parseInt(document.getElementById('prod-stock').value, 10);
-        const imagenUrl = document.getElementById('prod-imagen').value;
         const imagenUrlInput = document.getElementById('prod-imagen')?.value || '';
         const payload = {
             nombre,
@@ -75,21 +99,15 @@ class App {
             if (this.editingId === null) {
                 await this.api.createProducto(payload);
             }
-            this.closeModal();
+            else {
+                await this.api.updateProducto(this.editingId, payload);
+            }
+            this.showCatalogView();
             await this.loadProducts();
         }
         catch (error) {
             console.error('Error al guardar producto:', error);
         }
-    }
-    openEditModal(product) {
-        this.editingId = Number(product.id);
-        document.getElementById('prod-nombre').value = product.nombre;
-        document.getElementById('prod-desc').value = product.descripcion;
-        document.getElementById('prod-precio').value = product.precio.toString();
-        document.getElementById('prod-stock').value = product.stock.toString();
-        document.getElementById('modal-title').innerText = 'Editar Producto';
-        this.modal.classList.add('active');
     }
     async handleDelete(id) {
         if (confirm('¿Deseas eliminar este producto?')) {
