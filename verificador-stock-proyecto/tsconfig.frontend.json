@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "rootDir": "./src",
     "outDir": "./public/js",
     "esModuleInterop": true,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true

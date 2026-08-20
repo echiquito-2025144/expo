@@ -5,7 +5,11 @@ export class ProductCard {
   private api = new ApiService();
   private element: HTMLElement;
 
-  constructor(private producto: ProductoDTO) {
+  constructor(
+    private producto: ProductoDTO,
+    private onEdit?: (producto: ProductoDTO) => void,
+    private onDelete?: (id: string) => void
+  ) {
     this.element = document.createElement('article');
     this.element.className = 'product-card';
     this.element.dataset.id = producto.id;
@@ -18,7 +22,7 @@ export class ProductCard {
 
     this.element.innerHTML = `
       <div class="product-image-wrapper">
-        <img src="${imagenUrl}" alt="${nombre}" class="product-image" />
+        <img src="${imagenUrl || 'https://via.placeholder.com/150'}" alt="${nombre}" class="product-image" />
         <span class="badge ${disponible ? 'badge-success' : 'badge-danger'}" id="badge-${id}">
           ${disponible ? `En stock (${stock})` : 'Agotado'}
         </span>
@@ -35,7 +39,11 @@ export class ProductCard {
             ${disponible ? 'Comprar ahora' : 'Agotado'}
           </button>
         </div>
-        <button id="btn-check-${id}" class="btn-verify">
+        <div class="product-actions" style="display: flex; gap: 8px; margin-top: 10px;">
+          <button id="btn-edit-${id}" class="btn btn-secondary">✏️ Editar</button>
+          <button id="btn-delete-${id}" class="btn btn-danger">🗑️ Eliminar</button>
+        </div>
+        <button id="btn-check-${id}" class="btn-verify" style="margin-top: 8px;">
           🔄 Verificar Stock en Vivo
         </button>
       </div>
@@ -43,8 +51,20 @@ export class ProductCard {
   }
 
   private setupListeners(): void {
-    const checkBtn = this.element.querySelector(`#btn-check-${this.producto.id}`);
+    const { id } = this.producto;
+
+    const checkBtn = this.element.querySelector(`#btn-check-${id}`);
     checkBtn?.addEventListener('click', () => this.verificarDisponibilidadActualizada());
+
+    const editBtn = this.element.querySelector(`#btn-edit-${id}`);
+    editBtn?.addEventListener('click', () => {
+      if (this.onEdit) this.onEdit(this.producto);
+    });
+
+    const deleteBtn = this.element.querySelector(`#btn-delete-${id}`);
+    deleteBtn?.addEventListener('click', () => {
+      if (this.onDelete) this.onDelete(id);
+    });
   }
 
   public async verificarDisponibilidadActualizada(): Promise<void> {

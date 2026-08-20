@@ -13,20 +13,57 @@
   <header class="navbar">
     <div class="container navbar-content">
       <h1 class="logo">TechStore<span>.io</span></h1>
-      <span class="status-indicator">🟢 Conectado a PostgreSQL</span>
+      <span class="status-indicator">🟢 Conectado a LocalStorage</span>
     </div>
   </header>
 
   <main class="container">
     <section class="hero">
       <h2>Catálogo de Productos en Tiempo Real</h2>
-      <p>El sistema detecta automáticamente la disponibilidad de stock desde nuestra base de datos PostgreSQL usando TypeScript y Express.</p>
+      <p>El sistema detecta automáticamente la disponibilidad de stock desde nuestra base de datos usando TypeScript y Express.</p>
+      <button id="btn-nuevo" class="btn btn-primary" style="margin-top: 15px;">+ Agregar Producto</button>
     </section>
 
     <section id="products-grid" class="products-grid">
       <!-- Los componentes ProductCard se renderizan aquí dinámicamente -->
     </section>
   </main>
+
+  <!-- Modal para Crear / Editar Producto -->
+  <div id="product-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Nuevo Producto</h3>
+        <button id="btn-close" class="btn-close" type="button">&times;</button>
+      </div>
+      <form id="product-form" class="modal-form">
+        <div class="form-group">
+          <label for="prod-nombre">Nombre</label>
+          <input type="text" id="prod-nombre" required />
+        </div>
+        <div class="form-group">
+          <label for="prod-desc">Descripción</label>
+          <textarea id="prod-desc" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="prod-precio">Precio ($)</label>
+          <input type="number" id="prod-precio" step="0.01" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="prod-stock">Stock</label>
+          <input type="number" id="prod-stock" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="prod-imagen">URL de Imagen</label>
+          <input type="url" id="prod-imagen" placeholder="https://ejemplo.com/imagen.jpg" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btn-cancel" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script type="module" src="js/frontend/app.js"></script>
 </body>
