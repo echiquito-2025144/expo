@@ -63,8 +63,44 @@ class App {
   private openCreateModal(): void {
     this.editingId = null;
     this.form.reset();
-    (document.getElementById('modal-title') as HTMLElement).innerText = 'Nuevo Producto';
-    this.modal.classList.add('active');
+    
+    const title = document.getElementById('modal-title');
+    if (title) title.innerText = 'Nuevo Producto';
+    
+    this.modal.style.display = 'flex'; // Cambia el display directamente
+  }
+
+  private closeModal(): void {
+    this.modal.style.display = 'none'; // Oculta el modal
+  }
+
+
+  private async handleFormSubmit(): Promise<void> {
+    const nombre = (document.getElementById('prod-nombre') as HTMLInputElement).value;
+    const descripcion = (document.getElementById('prod-desc') as HTMLTextAreaElement).value;
+    const precio = parseFloat((document.getElementById('prod-precio') as HTMLInputElement).value);
+    const stock = parseInt((document.getElementById('prod-stock') as HTMLInputElement).value, 10);
+    const imagenUrl = (document.getElementById('prod-imagen') as HTMLInputElement).value;
+
+    const imagenUrlInput = (document.getElementById('prod-imagen') as HTMLInputElement)?.value || '';
+
+    const payload = {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      imagenUrl: imagenUrlInput.trim() !== '' ? imagenUrlInput : 'https://via.placeholder.com/150'
+    };
+
+    try {
+      if (this.editingId === null) {
+        await this.api.createProducto(payload);
+      }
+      this.closeModal();
+      await this.loadProducts();
+    } catch (error) {
+      console.error('Error al guardar producto:', error);
+    }
   }
 
   private openEditModal(product: ProductoDTO): void {
@@ -77,27 +113,6 @@ class App {
     this.modal.classList.add('active');
   }
 
-  private closeModal(): void {
-    this.modal.classList.remove('active');
-  }
-
-  private async handleFormSubmit(): Promise<void> {
-    const nombre = (document.getElementById('prod-nombre') as HTMLInputElement).value;
-    const descripcion = (document.getElementById('prod-desc') as HTMLInputElement).value;
-    const precio = parseFloat((document.getElementById('prod-precio') as HTMLInputElement).value);
-    const stock = parseInt((document.getElementById('prod-stock') as HTMLInputElement).value, 10);
-
-    const payload = { nombre, descripcion, precio, stock };
-
-    if (this.editingId !== null) {
-      await this.api.updateProducto(this.editingId, payload);
-    } else {
-      await this.api.createProducto(payload);
-    }
-
-    this.closeModal();
-    await this.loadProducts();
-  }
 
   private async handleDelete(id: number): Promise<void> {
     if (confirm('¿Deseas eliminar este producto?')) {

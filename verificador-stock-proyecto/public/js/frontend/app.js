@@ -49,8 +49,38 @@ class App {
     openCreateModal() {
         this.editingId = null;
         this.form.reset();
-        document.getElementById('modal-title').innerText = 'Nuevo Producto';
-        this.modal.classList.add('active');
+        const title = document.getElementById('modal-title');
+        if (title)
+            title.innerText = 'Nuevo Producto';
+        this.modal.style.display = 'flex'; // Cambia el display directamente
+    }
+    closeModal() {
+        this.modal.style.display = 'none'; // Oculta el modal
+    }
+    async handleFormSubmit() {
+        const nombre = document.getElementById('prod-nombre').value;
+        const descripcion = document.getElementById('prod-desc').value;
+        const precio = parseFloat(document.getElementById('prod-precio').value);
+        const stock = parseInt(document.getElementById('prod-stock').value, 10);
+        const imagenUrl = document.getElementById('prod-imagen').value;
+        const imagenUrlInput = document.getElementById('prod-imagen')?.value || '';
+        const payload = {
+            nombre,
+            descripcion,
+            precio,
+            stock,
+            imagenUrl: imagenUrlInput.trim() !== '' ? imagenUrlInput : 'https://via.placeholder.com/150'
+        };
+        try {
+            if (this.editingId === null) {
+                await this.api.createProducto(payload);
+            }
+            this.closeModal();
+            await this.loadProducts();
+        }
+        catch (error) {
+            console.error('Error al guardar producto:', error);
+        }
     }
     openEditModal(product) {
         this.editingId = Number(product.id);
@@ -60,24 +90,6 @@ class App {
         document.getElementById('prod-stock').value = product.stock.toString();
         document.getElementById('modal-title').innerText = 'Editar Producto';
         this.modal.classList.add('active');
-    }
-    closeModal() {
-        this.modal.classList.remove('active');
-    }
-    async handleFormSubmit() {
-        const nombre = document.getElementById('prod-nombre').value;
-        const descripcion = document.getElementById('prod-desc').value;
-        const precio = parseFloat(document.getElementById('prod-precio').value);
-        const stock = parseInt(document.getElementById('prod-stock').value, 10);
-        const payload = { nombre, descripcion, precio, stock };
-        if (this.editingId !== null) {
-            await this.api.updateProducto(this.editingId, payload);
-        }
-        else {
-            await this.api.createProducto(payload);
-        }
-        this.closeModal();
-        await this.loadProducts();
     }
     async handleDelete(id) {
         if (confirm('¿Deseas eliminar este producto?')) {
