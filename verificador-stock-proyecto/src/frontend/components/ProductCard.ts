@@ -31,7 +31,7 @@ export class ProductCard {
         <h3 class="product-title">${nombre}</h3>
         <p class="product-description">${descripcion}</p>
         <div class="product-footer">
-          <span class="product-price">$${precio.toFixed(2)}</span>
+          <span class="product-price">Q.${precio.toFixed(2)}</span>
           <button 
             id="btn-buy-${id}" 
             class="btn ${disponible ? 'btn-primary' : 'btn-disabled'}" 
