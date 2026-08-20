@@ -40,7 +40,8 @@ class App {
         const card = new ProductCard(
           productoDTO,
           (p) => this.openEditModal(p),
-          (id) => this.handleDelete(Number(id))
+          (id) => this.handleDelete(Number(id)),
+          (p) => this.handleBuy(p) // Callback para procesar la compra
         );
   
         this.gridContainer?.appendChild(card.getElement());
@@ -126,6 +127,42 @@ class App {
       await this.loadProducts();
     } catch (error) {
       console.error('Error al guardar producto:', error);
+    }
+  }
+
+  private async handleBuy(product: ProductoDTO): Promise<void> {
+    if (product.stock <= 0) {
+      alert('Este producto no tiene unidades disponibles.');
+      return;
+    }
+
+    const input = prompt(
+      `¿Cuántas unidades de "${product.nombre}" deseas comprar?\nStock disponible: ${product.stock}`,
+      '1'
+    );
+
+    if (input === null) return;
+
+    const cantidad = parseInt(input, 10);
+
+    if (isNaN(cantidad) || cantidad <= 0) {
+      alert('Ingresa una cantidad válida mayor a 0.');
+      return;
+    }
+
+    if (cantidad > product.stock) {
+      alert(`No hay suficiente stock. Máximo disponible: ${product.stock}`);
+      return;
+    }
+
+    try {
+      const nuevoStock = product.stock - cantidad;
+      await this.api.updateProducto(product.id, { stock: nuevoStock });
+      alert(`¡Compra realizada con éxito! Se descontaron ${cantidad} unidad(es).`);
+      await this.loadProducts();
+    } catch (error) {
+      console.error('Error al procesar la compra:', error);
+      alert('Ocurrió un error al procesar la compra.');
     }
   }
 

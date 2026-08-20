@@ -69,4 +69,21 @@ export class ApiService {
       disponible: producto.stock > 0
     };
   }
+
+  public async comprarProducto(id: string | number, cantidad: number): Promise<ProductoDTO> {
+    const productos = await this.fetchProductos();
+    const producto = productos.find(p => String(p.id) === String(id));
+
+    if (!producto) {
+      throw new Error('Producto no encontrado.');
+    }
+
+    if (producto.stock < cantidad) {
+      throw new Error('Stock insuficiente.');
+    }
+
+    const nuevoStock = producto.stock - cantidad;
+
+    return await this.updateProducto(id, { stock: nuevoStock });
+  }
 }

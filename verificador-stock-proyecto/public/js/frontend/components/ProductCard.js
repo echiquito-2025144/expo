@@ -3,12 +3,14 @@ export class ProductCard {
     producto;
     onEdit;
     onDelete;
+    onBuy;
     api = new ApiService();
     element;
-    constructor(producto, onEdit, onDelete) {
+    constructor(producto, onEdit, onDelete, onBuy) {
         this.producto = producto;
         this.onEdit = onEdit;
         this.onDelete = onDelete;
+        this.onBuy = onBuy;
         this.element = document.createElement('article');
         this.element.className = 'product-card';
         this.element.dataset.id = producto.id;
@@ -37,8 +39,8 @@ export class ProductCard {
           </button>
         </div>
         <div class="product-actions" style="display: flex; gap: 8px; margin-top: 10px;">
-          <button id="btn-edit-${id}" class="btn btn-secondary"> Editar</button>
-          <button id="btn-delete-${id}" class="btn btn-danger"> Eliminar</button>
+          <button id="btn-edit-${id}" class="btn btn-secondary">Editar</button>
+          <button id="btn-delete-${id}" class="btn btn-danger">Eliminar</button>
         </div>
         <button id="btn-check-${id}" class="btn-verify" style="margin-top: 8px;">
            Verificar Stock en Vivo
@@ -48,6 +50,11 @@ export class ProductCard {
     }
     setupListeners() {
         const { id } = this.producto;
+        const buyBtn = this.element.querySelector(`#btn-buy-${id}`);
+        buyBtn?.addEventListener('click', () => {
+            if (this.onBuy)
+                this.onBuy(this.producto);
+        });
         const checkBtn = this.element.querySelector(`#btn-check-${id}`);
         checkBtn?.addEventListener('click', () => this.verificarDisponibilidadActualizada());
         const editBtn = this.element.querySelector(`#btn-edit-${id}`);

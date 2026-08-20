@@ -8,7 +8,8 @@ export class ProductCard {
   constructor(
     private producto: ProductoDTO,
     private onEdit?: (producto: ProductoDTO) => void,
-    private onDelete?: (id: string) => void
+    private onDelete?: (id: string) => void,
+    private onBuy?: (producto: ProductoDTO) => void
   ) {
     this.element = document.createElement('article');
     this.element.className = 'product-card';
@@ -40,8 +41,8 @@ export class ProductCard {
           </button>
         </div>
         <div class="product-actions" style="display: flex; gap: 8px; margin-top: 10px;">
-          <button id="btn-edit-${id}" class="btn btn-secondary"> Editar</button>
-          <button id="btn-delete-${id}" class="btn btn-danger"> Eliminar</button>
+          <button id="btn-edit-${id}" class="btn btn-secondary">Editar</button>
+          <button id="btn-delete-${id}" class="btn btn-danger">Eliminar</button>
         </div>
         <button id="btn-check-${id}" class="btn-verify" style="margin-top: 8px;">
            Verificar Stock en Vivo
@@ -52,6 +53,11 @@ export class ProductCard {
 
   private setupListeners(): void {
     const { id } = this.producto;
+
+    const buyBtn = this.element.querySelector(`#btn-buy-${id}`);
+    buyBtn?.addEventListener('click', () => {
+      if (this.onBuy) this.onBuy(this.producto);
+    });
 
     const checkBtn = this.element.querySelector(`#btn-check-${id}`);
     checkBtn?.addEventListener('click', () => this.verificarDisponibilidadActualizada());
