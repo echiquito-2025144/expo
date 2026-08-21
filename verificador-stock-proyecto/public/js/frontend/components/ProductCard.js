@@ -42,9 +42,6 @@ export class ProductCard {
           <button id="btn-edit-${id}" class="btn btn-secondary">Editar</button>
           <button id="btn-delete-${id}" class="btn btn-danger">Eliminar</button>
         </div>
-        <button id="btn-check-${id}" class="btn-verify" style="margin-top: 8px;">
-           Verificar Stock en Vivo
-        </button>
       </div>
     `;
     }
