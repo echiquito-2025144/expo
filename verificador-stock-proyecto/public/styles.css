@@ -1,3 +1,6 @@
+/* ==========================================
+   1. RESET Y ESTILOS GLOBALES
+   ========================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,14 +12,18 @@ body {
   background-color: #f8fafc;
   color: #0f172a;
   line-height: 1.5;
+  overflow-x: hidden;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 }
 
+/* ==========================================
+   2. NAVBAR & HERO
+   ========================================== */
 .navbar {
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
@@ -39,37 +46,25 @@ body {
   color: #2563eb;
 }
 
-.status-indicator {
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: #f1f5f9;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  color: #334155;
-}
-
 .hero {
-  padding: 3rem 0 2rem 0;
+  padding: 2.5rem 0 1.5rem 0;
   text-align: center;
 }
 
 .hero h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
-.hero p {
-  color: #64748b;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
+/* ==========================================
+   3. GRID Y TARJETAS DE PRODUCTO
+   ========================================== */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  padding-bottom: 4rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 3rem;
 }
 
 .product-card {
@@ -84,81 +79,104 @@ body {
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 }
 
+/* Imagen limpia con ratio fijo */
 .product-image-wrapper {
   position: relative;
+  width: 100%;
   height: 200px;
   background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.product-card img,
 .product-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 12px;
 }
 
+/* Badges de stock */
 .badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 0.25rem 0.75rem;
+  top: 10px;
+  right: 10px;
+  padding: 0.25rem 0.6rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
+  z-index: 2;
 }
 
-.badge-success {
-  background-color: #dcfce7;
-  color: #166534;
-}
+.badge-success { background-color: #dcfce7; color: #166534; }
+.badge-danger  { background-color: #fee2e2; color: #991b1b; }
 
-.badge-danger {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-
+/* Cuerpo del producto */
 .product-body {
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
 .product-title {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
+  color: #0f172a;
 }
 
 .product-description {
   font-size: 0.875rem;
   color: #64748b;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-grow: 1;
 }
 
+/* Precio y Botón Comprar */
 .product-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .product-price {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #0f172a;
 }
 
+/* Acciones secundarias (Editar / Eliminar) */
+.card-actions, .product-actions {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.card-actions .btn, .product-actions .btn {
+  flex: 1;
+}
+
+/* ==========================================
+   4. BOTONES
+   ========================================== */
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1rem;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 0.875rem;
   border: none;
   cursor: pointer;
+  text-align: center;
   transition: background-color 0.2s;
 }
 
@@ -171,147 +189,89 @@ body {
   background-color: #1d4ed8;
 }
 
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.btn-secondary:hover {
+  background-color: #cbd5e1;
+}
+
+.btn-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-danger:hover {
+  background-color: #fca5a5;
+}
+
 .btn-disabled {
   background-color: #94a3b8;
   color: #ffffff;
   cursor: not-allowed;
 }
 
-.btn-verify {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #cbd5e1;
-  padding: 0.5rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  color: #475569;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-verify:hover {
-  background-color: #f8fafc;
-}
-
-.loading, .error, .empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 3rem;
-  font-size: 1.1rem;
-  color: #64748b;
-}
-
+/* ==========================================
+   5. FORMULARIO / VISTA MODAL
+   ========================================== */
 #view-form {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
+  max-width: 550px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   font-weight: 600;
-  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
 }
 
 .form-group input,
 .form-group textarea {
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
 }
 
-.form-actions {
+.modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 0.75rem;
 }
 
-
-/* Contenedor de la imagen en la tarjeta */
-.product-card .card-image,
-.card-img-container {
-  width: 100%;
-  height: 200px; /* Ajusta esta altura al tamaño deseado para tus tarjetas */
-  overflow: hidden;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background-color: #f3f4f6;
-}
-
-/* Selector amplio para asegurar que aplique a la etiqueta <img> de la tarjeta */
-.product-card img,
-.card-img-container img,
-.products-grid img,
-.card img {
-  width: 100%;
-  height: 200px; /* Mantiene una altura uniforme en todas las tarjetas */
-  object-fit: contain; /* Muestra la imagen ENTERA sin recortarla */
-  object-position: center;
-  background-color: #f8fafc; /* Fondo claro para rellenar si la imagen es más angosta */
-  padding: 10px; /* Margen interno para que no toque las orillas */
-  box-sizing: border-box;
-}
-
-/* 1. Ajuste global para evitar desbordamiento horizontal */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* Evita el scroll lateral no deseado */
-}
-
-/* 2. Contenedor de la tienda/catálogo responsive */
-.productos-grid, .catalog-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem;
-  width: 100%;
-}
-
-/* 3. Imágenes fluidas */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* 4. Adaptaciones específicas para pantallas pequeñas (Celulares) */
-@media (max-width: 768px) {
-  /* Contenedores principales */
-  .container, .main-content {
-    width: 100% !important;
-    padding: 10px !important;
+/* ==========================================
+   6. RESPONSIVE DESIGN (CELULARES)
+   ========================================== */
+@media (max-width: 640px) {
+  .hero h2 {
+    font-size: 1.4rem;
   }
 
-  /* Encabezado e inputs del buscador/filtros */
-  .header, .nav-bar, .filters-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+  .products-grid {
+    grid-template-columns: 1fr; /* 1 sola columna perfecta en pantallas chicas */
+    gap: 1.25rem;
   }
 
-  /* Botones más fáciles de presionar en pantalla táctil */
-  button, .btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
+  .product-footer {
+    flex-direction: row;
+    align-items: center;
   }
 
-  /* Formularios/Modales de agregar producto */
-  .form-group input, .form-group select {
-    width: 100%;
-    font-size: 16px; /* Evita que iOS haga zoom automático al enfocar el input */
+  /* Evita que los inputs hagan zoom raro en iPhone */
+  .form-group input, 
+  .form-group textarea {
+    font-size: 16px;
   }
 }
