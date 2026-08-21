@@ -5,16 +5,7 @@ import productoRoutes from './routes/producto.routes.js';
 
 const app = express();
 
-// Configuración completa de CORS para responder peticiones preflight
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Responder explícitamente a las peticiones OPTIONS
-app.options('*', cors());
-
+app.use(cors());
 app.use(express.json());
 
 // Archivos estáticos de la app web frontend
