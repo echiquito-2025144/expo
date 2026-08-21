@@ -16,6 +16,8 @@ class App {
     await this.loadProducts();
   }
 
+  
+
   private async loadProducts(): Promise<void> {
     if (!this.gridContainer) return;
 
@@ -178,3 +180,4 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();
 });
+
