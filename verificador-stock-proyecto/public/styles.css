@@ -260,3 +260,58 @@ body {
   padding: 10px; /* Margen interno para que no toque las orillas */
   box-sizing: border-box;
 }
+
+/* 1. Ajuste global para evitar desbordamiento horizontal */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Evita el scroll lateral no deseado */
+}
+
+/* 2. Contenedor de la tienda/catálogo responsive */
+.productos-grid, .catalog-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* 3. Imágenes fluidas */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 4. Adaptaciones específicas para pantallas pequeñas (Celulares) */
+@media (max-width: 768px) {
+  /* Contenedores principales */
+  .container, .main-content {
+    width: 100% !important;
+    padding: 10px !important;
+  }
+
+  /* Encabezado e inputs del buscador/filtros */
+  .header, .nav-bar, .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  /* Botones más fáciles de presionar en pantalla táctil */
+  button, .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  /* Formularios/Modales de agregar producto */
+  .form-group input, .form-group select {
+    width: 100%;
+    font-size: 16px; /* Evita que iOS haga zoom automático al enfocar el input */
+  }
+}
