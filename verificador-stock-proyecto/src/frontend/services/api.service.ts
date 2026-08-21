@@ -3,95 +3,63 @@ import { ProductoDTO } from '../../shared/types/producto.types.js';
 export class ApiService {
   private baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3000/api'
-    : 'https://tu-api.onrender.com/api';
+    : 'https://backend-tienda-2ugq.onrender.com/api';
 
-
-
-
-
-  private STORAGE_KEY = 'techstore_products';
-
-  private initialData: ProductoDTO[] = [
-    { id: '1', nombre: 'Teclado Mecánico RGB', descripcion: 'Switches blue y retroiluminación RGB.', precio: 89.99, stock: 12, disponible: true, imagenUrl: 'https://via.placeholder.com/150' },
-    { id: '2', nombre: 'Mouse Gamer Ergonómico', descripcion: 'Sensor de 16,000 DPI y 6 botones.', precio: 45.50, stock: 0, disponible: false, imagenUrl: 'https://via.placeholder.com/150' },
-    { id: '3', nombre: 'Monitor 27" 144Hz 1ms', descripcion: 'Panel IPS Full HD ideal para gaming.', precio: 249.00, stock: 3, disponible: true, imagenUrl: 'https://via.placeholder.com/150' }
-  ];
-
+  // 1. Obtener todos los productos desde la base de datos
   public async fetchProductos(): Promise<ProductoDTO[]> {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    if (!data) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.initialData));
-      return this.initialData;
-    }
-    return JSON.parse(data);
+    const res = await fetch(`${this.baseUrl}/productos`);
+    if (!res.ok) throw new Error('Error al obtener productos del servidor');
+    return await res.json();
   }
 
+  // 2. Crear un nuevo producto en la base de datos
   public async createProducto(datos: Omit<ProductoDTO, 'id' | 'disponible'>): Promise<ProductoDTO> {
-    const productos = await this.fetchProductos();
-    
-    const newProduct: ProductoDTO = {
-      id: Date.now().toString(),
-      nombre: datos.nombre,
-      descripcion: datos.descripcion,
-      precio: datos.precio,
-      stock: datos.stock,
-      disponible: datos.stock > 0,
-      imagenUrl: datos.imagenUrl || 'https://via.placeholder.com/150'
-    };
-
-    productos.push(newProduct);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(productos));
-    return newProduct;
+    const res = await fetch(`${this.baseUrl}/productos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+    if (!res.ok) throw new Error('Error al crear el producto');
+    return await res.json();
   }
 
+  // 3. Actualizar un producto existente
   public async updateProducto(id: string | number, datos: Partial<ProductoDTO>): Promise<ProductoDTO> {
-    const productos = await this.fetchProductos();
-    const index = productos.findIndex(p => String(p.id) === String(id));
-    if (index === -1) throw new Error('Producto no encontrado');
-
-    productos[index] = { 
-      ...productos[index], 
-      ...datos,
-      disponible: datos.stock !== undefined ? datos.stock > 0 : productos[index].disponible
-    };
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(productos));
-    return productos[index];
+    const res = await fetch(`${this.baseUrl}/productos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+    if (!res.ok) throw new Error('Error al actualizar el producto');
+    return await res.json();
   }
 
+  // 4. Eliminar un producto
   public async deleteProducto(id: string | number): Promise<void> {
-    let productos = await this.fetchProductos();
-    productos = productos.filter(p => String(p.id) !== String(id));
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(productos));
+    const res = await fetch(`${this.baseUrl}/productos/${id}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Error al eliminar el producto');
   }
 
+  // 5. Consultar stock individual
   public async fetchStock(id: string | number): Promise<{ stockActual: number; disponible: boolean }> {
-    const productos = await this.fetchProductos();
-    const producto = productos.find(p => String(p.id) === String(id));
-
-    if (!producto) {
-      throw new Error('Producto no encontrado');
-    }
-
+    const res = await fetch(`${this.baseUrl}/productos/${id}`);
+    if (!res.ok) throw new Error('Producto no encontrado');
+    const producto: ProductoDTO = await res.json();
     return {
       stockActual: producto.stock,
       disponible: producto.stock > 0
     };
   }
 
+  // 6. Realizar compra / Reducir stock
   public async comprarProducto(id: string | number, cantidad: number): Promise<ProductoDTO> {
-    const productos = await this.fetchProductos();
-    const producto = productos.find(p => String(p.id) === String(id));
-
-    if (!producto) {
-      throw new Error('Producto no encontrado.');
-    }
-
-    if (producto.stock < cantidad) {
+    const producto = await this.fetchStock(id);
+    if (producto.stockActual < cantidad) {
       throw new Error('Stock insuficiente.');
     }
-
-    const nuevoStock = producto.stock - cantidad;
-
+    const nuevoStock = producto.stockActual - cantidad;
     return await this.updateProducto(id, { stock: nuevoStock });
   }
 }
