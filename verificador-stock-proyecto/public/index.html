@@ -11,8 +11,12 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="container navbar-content">
+    <div class="container navbar-content" style="display: flex; justify-content: space-between; align-items: center;">
       <h1 class="logo">TechStore<span>.io</span></h1>
+      <div class="auth-controls">
+        <button id="btn-login-trigger" class="btn btn-primary">Iniciar Sesión</button>
+        <button id="btn-logout" class="btn btn-secondary" style="display: none;">Cerrar Sesión</button>
+      </div>
     </div>
   </header>
 
@@ -21,7 +25,7 @@
     <div id="view-catalog">
       <section class="hero">
         <h2>Catálogo de Productos en Tiempo Real</h2>
-        <button id="btn-nuevo" class="btn btn-primary" style="margin-top: 15px;">+ Agregar Producto</button>
+        <button id="btn-nuevo" class="btn btn-primary" style="margin-top: 15px; display: none;">+ Agregar Producto</button>
       </section>
 
       <section id="products-grid" class="products-grid">
@@ -59,6 +63,27 @@
           <div class="modal-actions" style="margin-top: 20px;">
             <button type="button" id="btn-cancel" class="btn btn-secondary">Cancelar</button>
             <button type="submit" class="btn btn-primary">Guardar Producto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE LOGIN PARA ADMINISTRADORES -->
+    <div id="modal-login" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000;">
+      <div class="form-container" style="max-width: 380px; width: 90%; padding: 25px; border-radius: 8px; background: #fff;">
+        <h2 style="margin-bottom: 15px; text-align: center;">Acceso Administrador</h2>
+        <form id="form-login" class="modal-form">
+          <div class="form-group">
+            <label for="login-user">Usuario</label>
+            <input type="text" id="login-user" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="login-pass">Contraseña</label>
+            <input type="password" id="login-pass" required autocomplete="current-password" />
+          </div>
+          <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button type="button" id="btn-close-login" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Entrar</button>
           </div>
         </form>
       </div>

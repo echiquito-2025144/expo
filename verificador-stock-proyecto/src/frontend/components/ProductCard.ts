@@ -20,6 +20,7 @@ export class ProductCard {
 
   private render(): void {
     const { id, nombre, descripcion, precio, stock, disponible, imagenUrl } = this.producto;
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
     this.element.innerHTML = `
       <div class="product-image-wrapper">
@@ -40,7 +41,7 @@ export class ProductCard {
             ${disponible ? 'Comprar ahora' : 'Agotado'}
           </button>
         </div>
-        <div class="product-actions" style="display: flex; gap: 8px; margin-top: 10px;">
+        <div class="product-actions" style="display: ${isAdmin ? 'flex' : 'none'}; gap: 8px; margin-top: 10px;">
           <button id="btn-edit-${id}" class="btn btn-secondary">Editar</button>
           <button id="btn-delete-${id}" class="btn btn-danger">Eliminar</button>
         </div>

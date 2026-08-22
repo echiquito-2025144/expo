@@ -9,10 +9,18 @@ class App {
   private viewForm = document.getElementById('view-form') as HTMLElement;
   private form = document.getElementById('product-form') as HTMLFormElement;
   private btnNuevo = document.getElementById('btn-nuevo') as HTMLButtonElement;
-  private editingId: string | null = null; // 👈 Cambiado a string | null
+  
+  // Elementos de autenticación
+  private btnLoginTrigger = document.getElementById('btn-login-trigger');
+  private btnLogout = document.getElementById('btn-logout');
+  private modalLogin = document.getElementById('modal-login');
+  private formLogin = document.getElementById('form-login') as HTMLFormElement;
+
+  private editingId: string | null = null;
 
   public async init(): Promise<void> {
     this.setupEventListeners();
+    this.applyPermissions();
     await this.loadProducts();
   }
 
@@ -40,7 +48,7 @@ class App {
         const card = new ProductCard(
           productoDTO,
           (p) => this.openEditModal(p),
-          (id) => this.handleDelete(String(id)), // 👈 Mantiene string
+          (id) => this.handleDelete(String(id)),
           (p) => this.handleBuy(p)
         );
   
@@ -79,6 +87,53 @@ class App {
       e.preventDefault();
       await this.handleFormSubmit();
     });
+
+    // Control del Modal de Login
+    this.btnLoginTrigger?.addEventListener('click', () => {
+      if (this.modalLogin) this.modalLogin.style.display = 'flex';
+    });
+
+    document.getElementById('btn-close-login')?.addEventListener('click', () => {
+      if (this.modalLogin) this.modalLogin.style.display = 'none';
+    });
+
+    // Envío del Formulario de Inicio de Sesión
+    this.formLogin?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = (document.getElementById('login-user') as HTMLInputElement).value;
+      const pass = (document.getElementById('login-pass') as HTMLInputElement).value;
+
+      // Credenciales de Administrador predeterminadas
+      if (user === 'admin' && pass === '12345') {
+        localStorage.setItem('isAdmin', 'true');
+        if (this.modalLogin) this.modalLogin.style.display = 'none';
+        this.formLogin.reset();
+        this.applyPermissions();
+        this.loadProducts(); // Recarga para habilitar botones de edición/eliminación
+      } else {
+        alert('Credenciales incorrectas');
+      }
+    });
+
+    // Evento de Cerrar Sesión
+    this.btnLogout?.addEventListener('click', () => {
+      localStorage.removeItem('isAdmin');
+      this.applyPermissions();
+      this.loadProducts(); // Recarga para volver a la vista de usuario normal
+    });
+  }
+
+  private applyPermissions(): void {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+    // Mostrar u ocultar el botón "+ Agregar Producto"
+    if (this.btnNuevo) {
+      this.btnNuevo.style.display = isAdmin ? 'inline-block' : 'none';
+    }
+
+    // Alternar visibilidad de los botones del header
+    if (this.btnLoginTrigger) this.btnLoginTrigger.style.display = isAdmin ? 'none' : 'inline-block';
+    if (this.btnLogout) this.btnLogout.style.display = isAdmin ? 'inline-block' : 'none';
   }
 
   private openCreateModal(): void {
@@ -88,7 +143,7 @@ class App {
   }
 
   private openEditModal(product: ProductoDTO): void {
-    this.editingId = String(product.id); // 👈 Asigna el ID como string
+    this.editingId = String(product.id);
     (document.getElementById('prod-nombre') as HTMLInputElement).value = product.nombre;
     (document.getElementById('prod-desc') as HTMLTextAreaElement).value = product.descripcion;
     (document.getElementById('prod-precio') as HTMLInputElement).value = product.precio.toString();
@@ -119,7 +174,7 @@ class App {
       if (this.editingId === null) {
         await this.api.createProducto(payload);
       } else {
-        await this.api.updateProducto(this.editingId, payload); // 👈 Envia el id string correcto
+        await this.api.updateProducto(this.editingId, payload);
       }
       this.showCatalogView();
       await this.loadProducts();
@@ -164,7 +219,7 @@ class App {
     }
   }
 
-  private async handleDelete(id: string): Promise<void> { // 👈 Recibe string
+  private async handleDelete(id: string): Promise<void> {
     if (confirm('¿Deseas eliminar este producto?')) {
       await this.api.deleteProducto(id);
       await this.loadProducts();
