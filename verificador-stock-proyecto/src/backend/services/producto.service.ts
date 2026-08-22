@@ -17,6 +17,36 @@ export class ProductoService {
     }));
   }
 
+  async crearProducto(datos: Omit<ProductoDTO, 'id' | 'disponible'>): Promise<ProductoDTO> {
+    const p = await this.repository.crear(datos);
+    return {
+      id: p.id,
+      nombre: p.nombre,
+      descripcion: p.descripcion,
+      precio: p.precio,
+      stock: p.stock,
+      disponible: p.stock > 0,
+      imagenUrl: p.imagenUrl
+    };
+  }
+
+  async actualizarProducto(id: string, datos: Partial<ProductoDTO>): Promise<ProductoDTO> {
+    const p = await this.repository.actualizar(id, datos);
+    return {
+      id: p.id,
+      nombre: p.nombre,
+      descripcion: p.descripcion,
+      precio: p.precio,
+      stock: p.stock,
+      disponible: p.stock > 0,
+      imagenUrl: p.imagenUrl
+    };
+  }
+
+  async eliminarProducto(id: string): Promise<void> {
+    await this.repository.eliminar(id);
+  }
+
   async verificarStock(id: string): Promise<StockCheckResponse | null> {
     const producto = await this.repository.obtenerPorId(id);
     if (!producto) return null;

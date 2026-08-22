@@ -13,6 +13,35 @@ export class ProductoController {
     }
   };
 
+  crearProducto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const nuevoProducto = await this.service.crearProducto(req.body);
+      res.status(201).json(nuevoProducto);
+    } catch (error) {
+      res.status(500).json({ error: 'Error al crear el producto' });
+    }
+  };
+
+  actualizarProducto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const productoActualizado = await this.service.actualizarProducto(id, req.body);
+      res.json(productoActualizado);
+    } catch (error) {
+      res.status(500).json({ error: 'Error al actualizar el producto' });
+    }
+  };
+
+  eliminarProducto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      await this.service.eliminarProducto(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: 'Error al eliminar el producto' });
+    }
+  };
+
   verificarStock = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;

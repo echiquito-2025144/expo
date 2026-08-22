@@ -12,6 +12,6 @@ app.use(express.json());
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // API Routes
-app.use('/api', productoRoutes);
+app.use('/api/productos', productoRoutes);
 
 export default app;
