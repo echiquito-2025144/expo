@@ -9,14 +9,12 @@ class App {
   private viewForm = document.getElementById('view-form') as HTMLElement;
   private form = document.getElementById('product-form') as HTMLFormElement;
   private btnNuevo = document.getElementById('btn-nuevo') as HTMLButtonElement;
-  private editingId: number | null = null;
+  private editingId: string | null = null; // 👈 Cambiado a string | null
 
   public async init(): Promise<void> {
     this.setupEventListeners();
     await this.loadProducts();
   }
-
-  
 
   private async loadProducts(): Promise<void> {
     if (!this.gridContainer) return;
@@ -42,8 +40,8 @@ class App {
         const card = new ProductCard(
           productoDTO,
           (p) => this.openEditModal(p),
-          (id) => this.handleDelete(Number(id)),
-          (p) => this.handleBuy(p) // Callback para procesar la compra
+          (id) => this.handleDelete(String(id)), // 👈 Mantiene string
+          (p) => this.handleBuy(p)
         );
   
         this.gridContainer?.appendChild(card.getElement());
@@ -53,7 +51,6 @@ class App {
     }
   }
 
-  // Métodos auxiliares para alternar la vista activa
   private showFormView(title: string): void {
     if (this.viewCatalog && this.viewForm) {
       this.viewCatalog.style.display = 'none';
@@ -75,7 +72,6 @@ class App {
   private setupEventListeners(): void {
     this.btnNuevo?.addEventListener('click', () => this.openCreateModal());
     
-    // Controles para regresar desde el formulario
     document.getElementById('btn-back')?.addEventListener('click', () => this.showCatalogView());
     document.getElementById('btn-cancel')?.addEventListener('click', () => this.showCatalogView());
 
@@ -92,7 +88,7 @@ class App {
   }
 
   private openEditModal(product: ProductoDTO): void {
-    this.editingId = Number(product.id);
+    this.editingId = String(product.id); // 👈 Asigna el ID como string
     (document.getElementById('prod-nombre') as HTMLInputElement).value = product.nombre;
     (document.getElementById('prod-desc') as HTMLTextAreaElement).value = product.descripcion;
     (document.getElementById('prod-precio') as HTMLInputElement).value = product.precio.toString();
@@ -123,7 +119,7 @@ class App {
       if (this.editingId === null) {
         await this.api.createProducto(payload);
       } else {
-        await this.api.updateProducto(this.editingId, payload);
+        await this.api.updateProducto(this.editingId, payload); // 👈 Envia el id string correcto
       }
       this.showCatalogView();
       await this.loadProducts();
@@ -159,7 +155,7 @@ class App {
 
     try {
       const nuevoStock = product.stock - cantidad;
-      await this.api.updateProducto(product.id, { stock: nuevoStock });
+      await this.api.updateProducto(String(product.id), { stock: nuevoStock });
       alert(`¡Compra realizada con éxito! Se descontaron ${cantidad} unidad(es).`);
       await this.loadProducts();
     } catch (error) {
@@ -168,7 +164,7 @@ class App {
     }
   }
 
-  private async handleDelete(id: number): Promise<void> {
+  private async handleDelete(id: string): Promise<void> { // 👈 Recibe string
     if (confirm('¿Deseas eliminar este producto?')) {
       await this.api.deleteProducto(id);
       await this.loadProducts();
@@ -180,4 +176,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();
 });
-
