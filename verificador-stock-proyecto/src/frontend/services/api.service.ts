@@ -3,8 +3,8 @@ import { ProductoDTO } from '../../shared/types/producto.types.js';
 export class ApiService {
   // URL real de tu servidor en Render
   private baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:3000'
-  : 'https://backend-tienda-2ugq.onrender.com';
+    ? 'http://localhost:3000/api'
+    : 'https://backend-tienda-2ugq.onrender.com/api';
 
   public async fetchProductos(): Promise<ProductoDTO[]> {
     const res = await fetch(`${this.baseUrl}/productos`);
